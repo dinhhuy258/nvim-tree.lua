@@ -1,4 +1,5 @@
 local lib = require'nvim-tree.lib'
+local pops = require'nvim-tree.populate'
 local state = require'nvim-tree.state'
 local fs = require'nvim-tree.fs'
 
@@ -20,7 +21,13 @@ M.keypress_funcs = {
     end
 
     state.clear_selections()
-  end
+  end,
+  toggle_hidden = function()
+    pops.show_ignored = not pops.show_ignored
+    pops.show_dotfiles = not pops.show_dotfiles
+
+    lib.refresh_tree()
+  end,
 }
 
 return M
