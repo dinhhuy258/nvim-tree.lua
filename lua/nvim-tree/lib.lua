@@ -460,6 +460,9 @@ function M.collapse_all()
 end
 
 function M.change_dir(name)
+  if vim.g.huy_duong_workspace then
+    return
+  end
   local foldername = name == '..' and vim.fn.fnamemodify(M.Tree.cwd, ':h') or name
   local no_cwd_change = vim.fn.expand(foldername) == M.Tree.cwd
   if no_cwd_change then
