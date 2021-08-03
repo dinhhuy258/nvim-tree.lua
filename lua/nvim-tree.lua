@@ -8,6 +8,7 @@ local renderer = require'nvim-tree.renderer'
 local fs = require'nvim-tree.fs'
 local view = require'nvim-tree.view'
 local utils = require'nvim-tree.utils'
+local custom = require'nvim-tree-custom'
 
 local _config = {
   is_windows          = vim.fn.has('win32') == 1 or vim.fn.has('win32unix') == 1,
@@ -160,6 +161,10 @@ function M.on_keypress(mode)
 
   if keypress_funcs[mode] then
     return keypress_funcs[mode](node)
+  end
+
+  if custom.keypress_funcs[mode] then
+    return custom.keypress_funcs[mode](node)
   end
 
   if node.name == ".." then

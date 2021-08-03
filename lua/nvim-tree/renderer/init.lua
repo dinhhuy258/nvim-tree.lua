@@ -1,6 +1,7 @@
 local config = require'nvim-tree.config'
 local utils = require'nvim-tree.utils'
 local view = require'nvim-tree.view'
+local state = require'nvim-tree.state'
 local _padding = require'nvim-tree.renderer.padding'
 local _help = require'nvim-tree.renderer.help'
 
@@ -292,6 +293,10 @@ local function update_draw_data(tree, depth, markers)
       -- INFO: this is mandatory in order to keep gui attributes (bold/italics)
       local folder_hl = "NvimTreeFolderName"
       local name = node.name
+      if state.is_selected(node) then
+        name = name .. "(*)"
+      end
+
       local next = node.group_next
       while next do
         name = name .. "/" .. next.name
@@ -332,7 +337,12 @@ local function update_draw_data(tree, depth, markers)
         icon = get_file_icon(node.name, node.extension, index, offset)
         git_icons = get_git_icons(node, index, offset, #icon)
       end
-      table.insert(lines, padding..icon..git_icons..node.name)
+      local name = node.name
+      if state.is_selected(node) then
+        name = name .. "(*)"
+      end
+
+      table.insert(lines, padding..icon..git_icons..name)
 
       if node.executable then
         table.insert(hl, {'NvimTreeExecFile', index, offset+#icon+#git_icons, -1 })
