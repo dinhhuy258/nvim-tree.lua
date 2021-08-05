@@ -159,12 +159,12 @@ function M.on_keypress(mode)
   local node = lib.get_node_at_cursor()
   if not node then return end
 
-  if keypress_funcs[mode] then
-    return keypress_funcs[mode](node)
-  end
-
   if custom.keypress_funcs[mode] then
     return custom.keypress_funcs[mode](node)
+  end
+
+  if keypress_funcs[mode] then
+    return keypress_funcs[mode](node)
   end
 
   if node.name == ".." then

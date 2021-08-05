@@ -14,8 +14,15 @@ M.keypress_funcs = {
     state.clear_selections()
     lib.redraw()
   end,
-  batch_delete = function()
+  delete = function(currentNode)
     local nodes = state.get_selected_nodes()
+
+    if next(nodes) == nil then
+      -- If select nothing then delete the current node
+      fs.remove(currentNode)
+      return
+    end
+
     for _, node in ipairs(nodes) do
       fs.remove(node)
     end
