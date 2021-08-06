@@ -61,6 +61,27 @@ local function remove(node)
 	end
 end
 
+local function rename_loaded_buffers(old_name, new_name)
+    for _, buf in pairs(api.nvim_list_bufs()) do
+      if api.nvim_buf_is_loaded(buf) then
+        if api.nvim_buf_get_name(buf) == old_name then
+          api.nvim_buf_set_name(buf, new_name)
+          -- to avoid the 'overwrite existing file' error message on write
+          vim.api.nvim_buf_call(buf, function() vim.cmd("silent! w!") end)
+        end
+      end
+    end
+end
+
+local function do_cut(source, destination)
+  local success = luv.fs_rename(source, destination)
+  if not success then
+    return success
+  end
+  rename_loaded_buffers(source, destination)
+  return true
+end
+
 local function do_copy(source, destination)
   local source_stats = luv.fs_stat(source)
 
@@ -146,6 +167,11 @@ end
 function M.copy(node, nodes)
 	-- TODO: unify_ancestors
   do_paste(node, nodes, "copy", do_copy)
+end
+
+function M.cut(node, nodes)
+	-- TODO: unify_ancestors
+  do_paste(node, nodes, "copy", do_cut)
 end
 
 return M

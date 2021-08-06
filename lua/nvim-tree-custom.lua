@@ -54,6 +54,25 @@ M.keypress_funcs = {
 			state.clear_selections()
 		end
 	end,
+	cut = function(node)
+		local nodes = state.get_selected_nodes()
+
+		if next(nodes) == nil then
+			-- If select nothing then delete the current node
+      print("Nothing to move")
+			return
+		end
+
+		print("Move selected nodes ? y/n")
+		local ans = utils.get_user_input_char()
+		utils.clear_prompt()
+
+		if ans:match("^y") then
+			fs_custom.cut(node, nodes)
+			lib.refresh_tree()
+			state.clear_selections()
+		end
+	end,
 	toggle_hidden = function()
 		pops.show_ignored = not pops.show_ignored
 		pops.show_dotfiles = not pops.show_dotfiles
