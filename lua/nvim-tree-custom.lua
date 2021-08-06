@@ -16,12 +16,12 @@ M.keypress_funcs = {
 		state.clear_selections()
 		lib.redraw()
 	end,
-	delete = function(currentNode)
+	delete = function(node)
 		local nodes = state.get_selected_nodes()
 
 		if next(nodes) == nil then
 			-- If select nothing then delete the current node
-			fs.remove(currentNode)
+			fs.remove(node)
 			return
 		end
 
@@ -30,7 +30,26 @@ M.keypress_funcs = {
 		utils.clear_prompt()
 
 		if ans:match("^y") then
-			fs_custom.batch_delete(nodes)
+			fs_custom.delete(nodes)
+			lib.refresh_tree()
+			state.clear_selections()
+		end
+	end,
+	copy = function(node)
+		local nodes = state.get_selected_nodes()
+
+		if next(nodes) == nil then
+			-- If select nothing then delete the current node
+      print("Nothing to copy")
+			return
+		end
+
+		print("Copy selected nodes ? y/n")
+		local ans = utils.get_user_input_char()
+		utils.clear_prompt()
+
+		if ans:match("^y") then
+			fs_custom.copy(node, nodes)
 			lib.refresh_tree()
 			state.clear_selections()
 		end
