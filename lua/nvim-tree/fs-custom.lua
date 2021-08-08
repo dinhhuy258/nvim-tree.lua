@@ -133,8 +133,13 @@ local function do_single_paste(source, dest, action_type, action_fn)
     local success, errmsg = action_fn(source, dest)
     if not success then
       api.nvim_err_writeln('Could not '..action_type..' '..source..' - '..errmsg)
+      return nil
+    else
+      return dest
     end
   end
+
+  return nil
 end
 
 local function do_paste(node, nodes, action_type, action_fn)
@@ -151,10 +156,16 @@ local function do_paste(node, nodes, action_type, action_fn)
     destination = vim.fn.fnamemodify(destination, ':p:h:h')
   end
 
+  local dest_paths = {}
   for _, entry in ipairs(nodes) do
     local dest = utils.path_join({destination, entry.name })
-    do_single_paste(entry.absolute_path, dest, action_type, action_fn)
+    dest = do_single_paste(entry.absolute_path, dest, action_type, action_fn)
+    if dest ~= nil then
+      table.insert(dest_paths, dest)
+    end
   end
+
+  return dest_paths
 end
 
 function M.delete(nodes)
@@ -166,12 +177,12 @@ end
 
 function M.copy(node, nodes)
 	-- TODO: unify_ancestors
-  do_paste(node, nodes, "copy", do_copy)
+  return do_paste(node, nodes, "copy", do_copy)
 end
 
 function M.cut(node, nodes)
 	-- TODO: unify_ancestors
-  do_paste(node, nodes, "copy", do_cut)
+  return do_paste(node, nodes, "copy", do_cut)
 end
 
 return M

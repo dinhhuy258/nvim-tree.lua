@@ -2,10 +2,19 @@ local lib = require("nvim-tree.lib")
 local pops = require("nvim-tree.populate")
 local state = require("nvim-tree.state")
 local utils = require("nvim-tree.utils")
+local view = require'nvim-tree.view'
 local fs = require("nvim-tree.fs")
 local fs_custom = require("nvim-tree.fs-custom")
 
 local M = {}
+
+local function focus_file(file)
+  local _, i = utils.find_node(
+    lib.Tree.entries,
+    function(node) return node.absolute_path == file end
+  )
+  view.set_cursor({i+1, 1})
+end
 
 M.keypress_funcs = {
 	toggle_selection = function(node)
@@ -49,9 +58,14 @@ M.keypress_funcs = {
 		utils.clear_prompt()
 
 		if ans:match("^y") then
-			fs_custom.copy(node, nodes)
+			local dest_paths = fs_custom.copy(node, nodes)
 			lib.refresh_tree()
 			state.clear_selections()
+      vim.notify(dest_paths[1], vim.log.levels.ERROR)
+
+      if #dest_paths == 1 then
+        focus_file(dest_paths[0] or dest_paths[1])
+      end
 		end
 	end,
 	cut = function(node)
@@ -68,9 +82,13 @@ M.keypress_funcs = {
 		utils.clear_prompt()
 
 		if ans:match("^y") then
-			fs_custom.cut(node, nodes)
+			local dest_paths = fs_custom.cut(node, nodes)
 			lib.refresh_tree()
 			state.clear_selections()
+
+      if #dest_paths == 1 then
+        focus_file(dest_paths[0] or dest_paths[1])
+      end
 		end
 	end,
 	toggle_hidden = function()
