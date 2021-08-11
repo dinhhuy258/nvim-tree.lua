@@ -294,7 +294,7 @@ local function update_draw_data(tree, depth, markers)
       local folder_hl = "NvimTreeFolderName"
       local name = node.name
       if state.is_selected(node) then
-        name = name .. "(*)"
+        name = "(*) " .. name
       end
 
       local next = node.group_next
@@ -339,7 +339,7 @@ local function update_draw_data(tree, depth, markers)
       end
       local name = node.name
       if state.is_selected(node) then
-        name = name .. "(*)"
+        name = "(*) " .. name
       end
 
       table.insert(lines, padding..icon..git_icons..name)
