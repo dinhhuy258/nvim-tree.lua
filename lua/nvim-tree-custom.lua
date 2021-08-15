@@ -52,20 +52,14 @@ M.keypress_funcs = {
 			return
 		end
 
-		print("Copy selected nodes ? y/n")
-		local ans = utils.get_user_input_char()
-		utils.clear_prompt()
+    local dest_paths = fs_custom.copy(node, nodes)
+    lib.refresh_tree()
+    state.clear_selections()
+    vim.notify(dest_paths[1], vim.log.levels.ERROR)
 
-		if ans:match("^y") then
-			local dest_paths = fs_custom.copy(node, nodes)
-			lib.refresh_tree()
-			state.clear_selections()
-			vim.notify(dest_paths[1], vim.log.levels.ERROR)
-
-			if #dest_paths == 1 then
-				focus_file(dest_paths[0] or dest_paths[1])
-			end
-		end
+    if #dest_paths == 1 then
+      focus_file(dest_paths[0] or dest_paths[1])
+    end
 	end,
 	cut = function(node)
 		local nodes = state.get_selected_nodes()
@@ -76,33 +70,19 @@ M.keypress_funcs = {
 			return
 		end
 
-		print("Move selected nodes ? y/n")
-		local ans = utils.get_user_input_char()
-		utils.clear_prompt()
+    local dest_paths = fs_custom.cut(node, nodes)
+    lib.refresh_tree()
+    state.clear_selections()
 
-		if ans:match("^y") then
-			local dest_paths = fs_custom.cut(node, nodes)
-			lib.refresh_tree()
-			state.clear_selections()
-
-			if #dest_paths == 1 then
-				focus_file(dest_paths[0] or dest_paths[1])
-			end
-		end
+    if #dest_paths == 1 then
+      focus_file(dest_paths[0] or dest_paths[1])
+    end
 	end,
 	toggle_hidden = function()
 		pops.show_ignored = not pops.show_ignored
 		pops.show_dotfiles = not pops.show_dotfiles
 
 		lib.refresh_tree()
-	end,
-	bigger = function()
-		local winnr = view.get_winnr()
-		vim.api.nvim_win_set_width(winnr, vim.api.nvim_win_get_width(winnr) + 2)
-	end,
-	smaller = function()
-		local winnr = view.get_winnr()
-		vim.api.nvim_win_set_width(winnr, vim.api.nvim_win_get_width(winnr) - 2)
 	end,
 }
 
