@@ -3,16 +3,16 @@ local M = {}
 function M.get_icon_state()
   local show_icons = vim.g.nvim_tree_show_icons or { git = 1, folders = 1, files = 1, folder_arrows = 1 }
   local icons = {
-    default = "",
-    symlink = "",
+    default = "",
+    symlink = "",
     git_icons = {
-      unstaged = "✗",
-      staged = "✓",
+      unstaged = "",
+      staged = "S",
       unmerged = "",
       renamed = "➜",
-      untracked = "★",
       deleted = "",
-      ignored = "◌"
+      untracked = "U",
+      ignored = "◌",
     },
     folder_icons = {
       arrow_closed = "",
@@ -47,21 +47,19 @@ function M.get_icon_state()
     end
   end
 
-  local has_devicons = pcall(require, 'nvim-web-devicons')
+  local has_devicons = pcall(require, "nvim-web-devicons")
   return {
     show_file_icon = show_icons.files == 1,
     show_folder_icon = show_icons.folders == 1,
     show_git_icon = show_icons.git == 1,
     show_folder_arrows = show_icons.folder_arrows == 1,
     has_devicons = has_devicons,
-    icons = icons
+    icons = icons,
   }
 end
 
 function M.use_git()
-  return M.get_icon_state().show_git_icon
-    or vim.g.nvim_tree_git_hl == 1
-    or vim.g.nvim_tree_gitignore == 1
+  return M.get_icon_state().show_git_icon or vim.g.nvim_tree_git_hl == 1 or vim.g.nvim_tree_gitignore == 1
 end
 
 function M.nvim_tree_callback(callback_name)
@@ -70,23 +68,23 @@ end
 
 function M.window_options()
   local opts = {}
-  local side = require'nvim-tree.view'.View.side
-  if side == 'right' then
-    opts.open_command = 'h'
-    opts.preview_command = 'l'
-    opts.split_command = 'aboveleft'
+  local side = require("nvim-tree.view").View.side
+  if side == "right" then
+    opts.open_command = "h"
+    opts.preview_command = "l"
+    opts.split_command = "aboveleft"
   elseif side == "left" then
-    opts.open_command = 'l'
-    opts.preview_command = 'h'
-    opts.split_command = 'belowright'
+    opts.open_command = "l"
+    opts.preview_command = "h"
+    opts.split_command = "belowright"
   elseif side == "top" then
-    opts.open_command = 'j'
-    opts.preview_command = 'k'
-    opts.split_command = 'bot'
+    opts.open_command = "j"
+    opts.preview_command = "k"
+    opts.split_command = "bot"
   else
-    opts.open_command = 'k'
-    opts.preview_command = 'j'
-    opts.split_command = 'top'
+    opts.open_command = "k"
+    opts.preview_command = "j"
+    opts.split_command = "top"
   end
 
   return opts
@@ -100,8 +98,8 @@ function M.window_picker_exclude()
     filetype = {
       "notify",
       "packer",
-      "qf"
-    }
+      "qf",
+    },
   }
 end
 
